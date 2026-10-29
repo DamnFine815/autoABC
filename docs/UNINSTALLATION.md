@@ -1,14 +1,14 @@
 # Uninstalling autoABC
 
-[Back to README](../README.md) · [v1.1.0 release](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.0)
+[Back to README](../README.md) · [v1.1.1 release](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.1)
 
-**Always use the uninstaller matching the version currently installed.** Do not use the 1.1.0 uninstaller against a 1.0.0 installation or vice versa. **Uninstall the older version and fully reboot before installing any newer version.**
+**Always use the uninstaller matching the version currently installed.** Do not use the 1.1.1 uninstaller against a 1.0.0 installation or vice versa. **Uninstall the older version and fully reboot before installing any newer version.**
 
-## Uninstall autoABC 1.1.0
+## Uninstall autoABC 1.1.1
 
-1. Download [autoABC-1.1.0-uninstall.zip](https://github.com/DamnFine815/autoABC/releases/download/v1.1.0/autoABC-1.1.0-uninstall.zip). Its SHA-256 is:
+1. Download [autoABC-1.1.1-uninstall.zip](https://github.com/DamnFine815/autoABC/releases/download/v1.1.1/autoABC-1.1.1-uninstall.zip). Its SHA-256 is:
 
-   `92c8a3bef287a25795739447253654e0db3938badc63314f80bc684f8915f444`
+   `66df415b7f65183ec0ed349548e9e1a8e2edf9a988f0ba242132b99a37d033f1`
 
 2. Stop playback, power the OPPO UDP-203 completely off, and remove other installation sticks.
 3. Extract **only** the uninstaller ZIP into the root of a clean, player-readable USB volume. Its layout begins:
@@ -29,8 +29,10 @@ The uninstaller verifies its owned runtime and boot-chain markers, restores only
 
 **Do not manually delete `/mnt/ubi_boot/autoABC` or replace `brick_monitor`.**
 
+**Upgrading from 1.1.0:** Use its matching 1.1.0 uninstaller. If oppo-dv-mkv 1.7.0 was installed first, that older uninstaller may reject the new launcher; stop instead of forcing removal. The 1.1.1 uninstaller does not remove 1.1.0.
+
 ## Upgrading from autoABC 1.0.0
 
-Use the **historical [autoABC-1.0.0-uninstall.zip](https://github.com/DamnFine815/autoABC/releases/download/v1.0.0/autoABC-1.0.0-uninstall.zip)** first. Confirm `UNINSTALLED` and perform a complete power cycle. Then run the v1.1.0 CHECKONLY on its own USB stick before installing.
+Use the **historical [autoABC-1.0.0-uninstall.zip](https://github.com/DamnFine815/autoABC/releases/download/v1.0.0/autoABC-1.0.0-uninstall.zip)** first. Confirm `UNINSTALLED` and perform a complete power cycle. Then run the v1.1.1 CHECKONLY on its own USB stick before installing.
 
 See [Installation](INSTALLATION.md), [Troubleshooting](TROUBLESHOOTING.md) and [Compatibility](COMPATIBILITY.md).
