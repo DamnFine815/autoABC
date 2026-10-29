@@ -1,0 +1,178 @@
+name: One-time - publish verified autoABC 1.1.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-v1.1.1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: autoabc-release-v1.1.1
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.head_commit.message == 'ci: publish verified autoABC v1.1.1'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout current main and tags
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Download the three exact, published 1.1.0 USB archives
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REF" == refs/heads/main ]]
+          mkdir -p "$RUNNER_TEMP/v110"
+          gh release download v1.1.0 --repo "$GITHUB_REPOSITORY" \
+            --dir "$RUNNER_TEMP/v110" --pattern 'autoABC-1.1.0-*.zip'
+          test "$(find "$RUNNER_TEMP/v110" -type f -maxdepth 1 -name '*.zip' | wc -l)" -eq 3
+
+      - name: Build byte-identical 1.1.1 USB archives and verify SHA-256
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/build_release_1_1_1.py "$RUNNER_TEMP/v110" "$RUNNER_TEMP/v111"
+          cd "$RUNNER_TEMP/v111"
+          sha256sum -c SHA256SUMS
+
+      - name: Check ZIP safety, all manifests, and POSIX syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import hashlib, os, subprocess, tempfile
+          output=Path(os.environ['RUNNER_TEMP'])/'v111'
+          count=0
+          for kind in ('CHECKONLY','install','uninstall'):
+              with ZipFile(output/('autoABC-1.1.1-'+kind+'.zip')) as z:
+                  assert z.testzip() is None
+                  names=z.namelist()
+                  assert len(names)==len(set(names))
+                  manifest=z.read('SHA256SUMS_RELEASE').decode('ascii').splitlines()
+                  checked=set()
+                  for row in manifest:
+                      digest,name=row.split('  ',1)
+                      assert name in names and name not in checked
+                      assert hashlib.sha256(z.read(name)).hexdigest()==digest,name
+                      checked.add(name)
+                  assert checked==set(names)-{'SHA256SUMS_RELEASE'}
+                  if kind=='CHECKONLY':
+                      assert 'AutoScript/CHECKONLY' in names
+                      main=z.read('AutoScript/autoABC-install.sh')
+                      assert b'CHECKONLY-ONLY BUILD: NO INSTALL' in main
+                      assert b'mv "$STAGE" "$D"' not in main
+                  with tempfile.TemporaryDirectory() as d:
+                      for name in names:
+                          data=z.read(name)
+                          if data.startswith(b'#!/bin/sh'):
+                              file=Path(d)/str(count)
+                              file.write_bytes(data)
+                              subprocess.run(['sh','-n',str(file)],check=True)
+                              count+=1
+                  print('ZIP_INTEGRITY=PASS',kind,len(names))
+          assert count>=30, count
+          print('SHELL_SYNTAX=PASS',count)
+          PY
+
+      - name: Mirror the verified 1.1.1 entrypoint sources and pin release manifests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os
+          root=Path.cwd()
+          out=Path(os.environ['RUNNER_TEMP'])/'v111'
+          counts={}
+          for kind in ('CHECKONLY','install','uninstall'):
+              folder=root/'installer'/kind.lower()
+              with ZipFile(out/('autoABC-1.1.1-'+kind+'.zip')) as z:
+                  n=0
+                  for item in z.namelist():
+                      if not item.startswith('AutoScript/'): continue
+                      short=item.removeprefix('AutoScript/')
+                      if '/' in short or not short: continue
+                      target=folder/short
+                      target.parent.mkdir(parents=True,exist_ok=True)
+                      target.write_bytes(z.read(item))
+                      n+=1
+                  counts[kind]=n
+          assert counts=={'CHECKONLY':9,'install':8,'uninstall':3},counts
+          with ZipFile(out/'autoABC-1.1.1-install.zip') as z:
+              payload=z.read('AutoScript/autoABC/SHA256SUMS')
+          research=root/'docs/research'
+          (research/'INSTALLED_PAYLOAD_SHA256SUMS_1.1.1.txt').write_bytes(payload)
+          (research/'RELEASE_1.1.1_SHA256SUMS.txt').write_bytes((out/'SHA256SUMS').read_bytes())
+          print('SOURCES_MIRRORED=PASS',counts)
+          PY
+          git add installer/checkonly installer/install installer/uninstall \
+            docs/research/INSTALLED_PAYLOAD_SHA256SUMS_1.1.1.txt \
+            docs/research/RELEASE_1.1.1_SHA256SUMS.txt
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'chore: mirror verified v1.1.1 USB entrypoint sources'
+            git push origin HEAD:main
+          fi
+          echo "RELEASE_TARGET=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Publish v1.1.1 with the exact four verified assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view v1.1.1 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::v1.1.1 release already exists. Refusing overwrite."
+            exit 1
+          fi
+          gh release create v1.1.1 \
+            "$RUNNER_TEMP/v111/autoABC-1.1.1-CHECKONLY.zip" \
+            "$RUNNER_TEMP/v111/autoABC-1.1.1-install.zip" \
+            "$RUNNER_TEMP/v111/autoABC-1.1.1-uninstall.zip" \
+            "$RUNNER_TEMP/v111/SHA256SUMS" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$RELEASE_TARGET" \
+            --title 'autoABC 1.1.1' \
+            --notes-file docs/RELEASE_NOTES_1.1.1.md \
+            --latest
+
+      - name: Verify the published release assets and tag
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v1.1.1" > "$RUNNER_TEMP/actual-release.json"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          parent=Path(os.environ['RUNNER_TEMP'])
+          release=json.loads((parent/'actual-release.json').read_text())
+          assert release['tag_name']=='v1.1.1'
+          assert release['draft'] is False and release['prerelease'] is False
+          assets=release['assets']
+          assert len(assets)==4,len(assets)
+          for item in assets:
+              data=(parent/'v111'/item['name']).read_bytes()
+              expected='sha256:'+hashlib.sha256(data).hexdigest()
+              assert item.get('digest')==expected,(item['name'],item.get('digest'),expected)
+          print('PUBLIC_RELEASE=PASS',release['html_url'],len(assets))
+          PY
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v1.1.1" --jq '.object.sha')" = "$RELEASE_TARGET"
+          echo 'GITHUB_TAG=PASS'
