@@ -1,7 +1,7 @@
 #!/bin/sh
-# autoABC 1.1.0: remove ONLY installer's verified boot integration.
-VERSION='1.1.0'
-ID='1.1.0'
+# autoABC 1.1.1 TEST: remove ONLY installer's verified boot integration.
+VERSION='1.1.1'
+ID='1.1.1'
 U='/mnt/ubi_boot'
 D="$U/autoABC"
 OVERLAY="$U/jb_overlay"
@@ -23,7 +23,7 @@ for F in /mnt/sd*/AutoScript/autoABC-uninstall.id; do
     [ -f "$C/autoABC-uninstall.sh" ] || continue
     if [ -z "$S" ]; then S="$C"; else AMB=1; fi
 done
-[ -n "$S" ] || { echo 'autoABC 1.1.0 uninstall: matching USB missing' > /tmp/autoabc110-uninstall-error.txt; exit 1; }
+[ -n "$S" ] || { echo 'autoABC 1.1.1 uninstall: matching USB missing' > /tmp/autoabc110-uninstall-error.txt; exit 1; }
 USBROOT="${S%/*}"
 LOG="$USBROOT/autoABC-uninstall.log"
 RESULT="$USBROOT/autoABC-uninstall-result.txt"
@@ -37,6 +37,18 @@ checksum(){ "$BB" sha256sum "$1" 2>/dev/null | "$BB" awk '{print $1}'; }
 BM_STOCK_SHA='9e7d885aa8f73c5c47a9a3bcd5dfe1d76faf28585232a9a068bb3116b5eede2f'
 BM_KEY8_SHA='b128bf89c2adcd76b386eeda1e1448b6c508f0db531eae138f56a7514acc0b6a'
 BM_SOURCE_SHA=''
+MKV_WRAPPER_OLD_SHA='ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a'
+MKV_WRAPPER_170_SHA='bcda04fbc464df8bd98b9ca57df0cec06d84a6f371519873f03241371f2b4dbc'
+MKV_BOOT_SHA=''
+mkv_wrapper_known(){
+    [ -f "$MKV" ] && [ -x "$MKV" ] && [ ! -L "$MKV" ] || return 1
+    MKV_CHECKED_SHA="$(checksum "$MKV")"
+    case "$MKV_CHECKED_SHA" in
+      "$MKV_WRAPPER_OLD_SHA") MKV_KNOWN_VERSION='1.5.0/1.6.0'; return 0 ;;
+      "$MKV_WRAPPER_170_SHA") MKV_KNOWN_VERSION='1.7.0'; return 0 ;;
+      *) return 1 ;;
+    esac
+}
 cleanup(){ rm -f "$TMP" "$TMP.expected_tail" "$EJECT_BB"; }
 trap cleanup 0
 eject_after_success(){
@@ -97,8 +109,9 @@ esac
 # exact, untouched recovery state as well.
 case "$MODE" in
   OVERLAY_MKV_AUTOSTART_110|OVERLAY_MKV_EARLYBOOT_110)
-    if [ ! -L "$MKV" ] && [ -x "$MKV" ] && [ "$(checksum "$MKV")" = 'ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a' ] && [ -d "$MKVD" ] && [ ! -L "$MKVD" ] && [ ! -L "$PREV" ] && [ -x "$PREV" ] && [ "$(checksum "$PREV")" = 'cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24' ]; then
-      echo 'DUAL_CHAIN=INTACT_MKV_AND_OVERLAY'
+    if [ ! -L "$MKV" ] && [ -x "$MKV" ] && mkv_wrapper_known && [ -d "$MKVD" ] && [ ! -L "$MKVD" ] && [ ! -L "$PREV" ] && [ -x "$PREV" ] && [ "$(checksum "$PREV")" = 'cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24' ]; then
+      MKV_BOOT_SHA="$MKV_CHECKED_SHA"
+      echo "DUAL_CHAIN=INTACT_MKV_AND_OVERLAY VERSION=$MKV_KNOWN_VERSION SHA256=$MKV_BOOT_SHA"
     elif [ ! -L "$MKV" ] && [ -x "$MKV" ] && [ "$(checksum "$MKV")" = 'cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24' ] && [ ! -e "$MKVD" ] && [ ! -L "$MKVD" ] && [ ! -e "$PREV" ] && [ ! -L "$PREV" ]; then
       echo 'DUAL_CHAIN=MKV_UNINSTALLED_OVERLAY_RESTORED'
     else fail 'dual MKV/overlay boot chain altered; refusing uninstall'; fi ;;
@@ -109,8 +122,10 @@ case "$MODE" in
     [ ! -e "$OVERLAY" ] && [ ! -L "$OVERLAY" ] || fail 'overlay appeared: conflicting boot managers'
     [ ! -L "$MKV" ] && [ -f "$MKV" ] && [ -x "$MKV" ] || fail 'bdpprog missing or symlinked'
     [ ! -L "$PREV" ] || fail 'bdpprog.prev symlinked'
-    if [ "$(checksum "$MKV")" = 'ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a' ]; then
+    if mkv_wrapper_known; then
       SUBMODE=CHAINED
+      MKV_BOOT_SHA="$MKV_CHECKED_SHA"
+      echo "MKV_BOOT_CHAIN=VERIFIED VERSION=$MKV_KNOWN_VERSION SHA256=$MKV_BOOT_SHA"
       [ -x "$PREV" ] && [ "$(checksum "$PREV")" = "$ADAPTER_EXPECTED_SHA" ] || fail 'MKV predecessor changed; refusing deletion'
     elif [ "$(checksum "$MKV")" = "$ADAPTER_EXPECTED_SHA" ]; then
       SUBMODE=PROMOTED
@@ -133,6 +148,20 @@ case "$MODE" in
     [ ! -L "$BM" ] && [ -x "$BM" ] && [ "$(checksum "$BM")" = 'd080667d48f2166ea633eee3dc539abe0865334828590c5d2b482cd41226cff8' ] || fail 'active earlyboot wrapper changed'
     [ ! -L "$REAL" ] && [ -x "$REAL" ] && [ "$(checksum "$REAL")" = "$BM_SOURCE_SHA" ] || fail 'saved original brick_monitor missing/altered' ;;
 esac
+# Re-verify foreign combined-mode ownership before any destructive cleanup.
+case "$MODE" in
+  OVERLAY_MKV_AUTOSTART_110|OVERLAY_MKV_EARLYBOOT_110)
+    if [ -n "$MKV_BOOT_SHA" ]; then
+      [ ! -L "$MKV" ] && [ "$(checksum "$MKV")" = "$MKV_BOOT_SHA" ] &&
+      [ ! -L "$PREV" ] && [ -x "$PREV" ] &&
+      [ "$(checksum "$PREV")" = 'cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24' ] &&
+      [ -d "$MKVD" ] && [ ! -L "$MKVD" ] || fail 'combined MKV launcher or predecessor changed before removal'
+    else
+      [ "$(checksum "$MKV")" = 'cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24' ] &&
+      [ ! -e "$PREV" ] && [ ! -L "$PREV" ] &&
+      [ ! -e "$MKVD" ] && [ ! -L "$MKVD" ] || fail 'promoted overlay changed before removal'
+    fi ;;
+esac
 # Confirm stop before unlinking anything. Abort on lingering owned processes.
 "$D/stop.sh" || fail 'autoABC stop script failed'
 "$BB" usleep 400000 2>/dev/null || :
@@ -144,7 +173,7 @@ done
 case "$MODE" in
   OPPODV_PREV_110|OPPODV_PREV_EARLY_110)
     if [ "$SUBMODE" = CHAINED ]; then
-        [ "$(checksum "$PREV")" = "$ADAPTER_EXPECTED_SHA" ] && [ "$(checksum "$MKV")" = 'ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a' ] || fail 'MKV chain changed during cleanup'
+        [ "$(checksum "$PREV")" = "$ADAPTER_EXPECTED_SHA" ] && [ "$(checksum "$MKV")" = "$MKV_BOOT_SHA" ] || fail 'MKV chain changed during cleanup'
         rm -f "$PREV" || fail 'cannot unlink autoABC predecessor'
         [ ! -e "$PREV" ] || fail 'predecessor still present'
     else

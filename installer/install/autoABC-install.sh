@@ -1,8 +1,8 @@
 #!/bin/sh
-# autoABC 1.1.0: verified RU-JB 65-0131 boot environments.
+# autoABC 1.1.1 TEST: verified RU-JB 65-0131 boot environments.
 # No persistent writes until complete payload + firmware + boot-owner preflight.
-VERSION='1.1.0'
-ID='1.1.0'
+VERSION='1.1.1'
+ID='1.1.1'
 U='/mnt/ubi_boot'
 D="$U/autoABC"
 OVERLAY="$U/jb_overlay"
@@ -35,7 +35,7 @@ for F in /mnt/sd*/AutoScript/autoABC-release.id; do
     [ -f "$C/autoABC-install.sh" ] && [ -d "$C/autoABC" ] || continue
     if [ -z "$S" ]; then S="$C"; else AMB=1; fi
 done
-[ -n "$S" ] || { echo 'autoABC 1.1.0: matching USB package missing' > /tmp/autoABC110-boot-error.txt; exit 1; }
+[ -n "$S" ] || { echo 'autoABC 1.1.1: matching USB package missing' > /tmp/autoABC110-boot-error.txt; exit 1; }
 USBROOT="${S%/*}"
 LOG="$USBROOT/autoABC.log"
 RESULT="$USBROOT/autoABC-result.txt"
@@ -49,7 +49,21 @@ checksum(){ "$BB" sha256sum "$1" 2>/dev/null | "$BB" awk '{print $1}'; }
 BM_STOCK_SHA='9e7d885aa8f73c5c47a9a3bcd5dfe1d76faf28585232a9a068bb3116b5eede2f'
 BM_KEY8_SHA='b128bf89c2adcd76b386eeda1e1448b6c508f0db531eae138f56a7514acc0b6a'
 BM_SOURCE_SHA=''
-MKV_WRAPPER_SHA='ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a'
+MKV_WRAPPER_OLD_SHA='ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a'
+MKV_WRAPPER_170_SHA='bcda04fbc464df8bd98b9ca57df0cec06d84a6f371519873f03241371f2b4dbc'
+MKV_BOOT_SHA=''
+mkv_wrapper_known(){
+    # Both hashes are taken from the two exact upstream tagged wrapper scripts.
+    # Refuse symlinks, non-executable files and every unknown launcher.
+    [ -f "$MKV" ] && [ -x "$MKV" ] && [ ! -L "$MKV" ] || return 1
+    MKV_CHECKED_SHA="$(checksum "$MKV")"
+    case "$MKV_CHECKED_SHA" in
+      "$MKV_WRAPPER_OLD_SHA") MKV_KNOWN_VERSION='1.5.0/1.6.0'; return 0 ;;
+      "$MKV_WRAPPER_170_SHA") MKV_KNOWN_VERSION='1.7.0'; return 0 ;;
+      *) return 1 ;;
+    esac
+}
+
 OVERLAY_LAUNCHER_SHA='cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24'
 BRICK_WRAPPER_SHA='d080667d48f2166ea633eee3dc539abe0865334828590c5d2b482cd41226cff8'
 NORMAL_ADAPTER_SHA='504833a82b01e0d87819b50f2e0736739646c67cccc1d89ccb3e080dd90c0bfa'
@@ -173,9 +187,9 @@ verify_existing_install(){
     esac
     case "$EXISTING_MODE" in
       OVERLAY_MKV_EARLYBOOT_110|OVERLAY_MKV_AUTOSTART_110)
-        [ ! -L "$MKV" ] && [ "$(checksum "$MKV")" = "$MKV_WRAPPER_SHA" ] && [ ! -L "$PREV" ] && [ "$(checksum "$PREV")" = "$OVERLAY_LAUNCHER_SHA" ] && [ -d "$MKVD" ] && [ ! -L "$MKVD" ] || fail 'installed dual MKV/overlay predecessor changed' ;;
+        [ ! -L "$MKV" ] && mkv_wrapper_known && [ ! -L "$PREV" ] && [ "$(checksum "$PREV")" = "$OVERLAY_LAUNCHER_SHA" ] && [ -d "$MKVD" ] && [ ! -L "$MKVD" ] || fail 'installed dual MKV/overlay predecessor changed' ;;
       OPPODV_PREV_110|OPPODV_PREV_EARLY_110)
-        [ ! -e "$OVERLAY" ] && [ ! -L "$OVERLAY" ] && [ ! -L "$MKV" ] && [ "$(checksum "$MKV")" = "$MKV_WRAPPER_SHA" ] && [ -d "$MKVD" ] && [ ! -L "$MKVD" ] || fail 'installed MKV owner changed'
+        [ ! -e "$OVERLAY" ] && [ ! -L "$OVERLAY" ] && [ ! -L "$MKV" ] && mkv_wrapper_known && [ -d "$MKVD" ] && [ ! -L "$MKVD" ] || fail 'installed MKV owner changed'
         case "$EXISTING_MODE" in
             OPPODV_PREV_EARLY_110) EXISTING_ADAPTER_SHA="$EARLY_ADAPTER_SHA" ;;
             *) EXISTING_ADAPTER_SHA="$NORMAL_ADAPTER_SHA" ;;
@@ -273,7 +287,7 @@ if [ -e "$D" ] || [ -L "$D" ]; then verify_existing_install; fi
 if [ -d "$OVERLAY" ] && [ ! -L "$OVERLAY" ]; then
     if [ -e "$MKVD" ] || [ -L "$MKVD" ]; then
         [ -d "$MKVD" ] && [ ! -L "$MKVD" ] || fail 'combined MKV runtime directory is unsafe'
-        [ -f "$MKV" ] && [ -x "$MKV" ] && [ ! -L "$MKV" ] && [ "$(checksum "$MKV")" = 'ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a' ] || fail 'combined MKV v1.5.0/v1.6.0 launcher missing or changed'
+        [ -f "$MKV" ] && [ -x "$MKV" ] && [ ! -L "$MKV" ] && mkv_wrapper_known || fail 'combined MKV launcher unknown (supported: exact v1.5/1.6 or v1.7.0 hashes)'
         [ -f "$PREV" ] && [ -x "$PREV" ] && [ ! -L "$PREV" ] && [ "$(checksum "$PREV")" = 'cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24' ] || fail 'combined bdpprog.prev is not the pristine jb_overlay launcher'
         [ -f "$MKVD/dvmkv.sh" ] && [ ! -L "$MKVD/dvmkv.sh" ] && { [ ! -e "$MKVD/fpage.sh" ] || { [ -f "$MKVD/fpage.sh" ] && [ ! -L "$MKVD/fpage.sh" ]; }; } && [ ! -e "$MKVD/disable" ] && [ ! -L "$MKVD/disable" ] || fail 'combined MKV runtime missing, unexpected or disabled'
         BOOT_CHAIN='OVERLAY_VIA_MKV'
@@ -307,7 +321,7 @@ if [ -d "$OVERLAY" ] && [ ! -L "$OVERLAY" ]; then
     fi
 elif [ ! -e "$OVERLAY" ] && [ ! -L "$OVERLAY" ]; then
         [ ! -e "$PREV" ] && [ ! -L "$PREV" ] || fail 'bdpprog.prev belongs to another mod'
-    [ -f "$MKV" ] && [ -x "$MKV" ] && [ ! -L "$MKV" ] && [ "$(checksum "$MKV")" = 'ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a' ] || fail 'oppo-dv-mkv v1.5.0/v1.6.0 boot wrapper missing or unexpected'
+    [ -f "$MKV" ] && [ -x "$MKV" ] && [ ! -L "$MKV" ] && mkv_wrapper_known || fail 'oppo-dv-mkv launcher unknown (supported: exact v1.5/1.6 or v1.7.0 hashes)'
     [ -f "$MKVD/dvmkv.sh" ] && [ ! -L "$MKVD/dvmkv.sh" ] && { [ ! -e "$MKVD/fpage.sh" ] || { [ -f "$MKVD/fpage.sh" ] && [ ! -L "$MKVD/fpage.sh" ]; }; } && [ ! -e "$MKVD/disable" ] || fail 'oppo-dv-mkv installation incomplete or disabled'
     [ -x /usr/local/bin/bdpprog.1 ] || fail 'original player missing'
     if [ "$EARLY" = 1 ]; then
@@ -322,6 +336,11 @@ elif [ ! -e "$OVERLAY" ] && [ ! -L "$OVERLAY" ]; then
     [ "$(checksum "$S/$ADAPTER_FILE")" = "$ADAPTER_EXPECTED_SHA" ] || fail 'autoABC MKV adapter checksum differs'
 else
     fail 'unknown/symlinked jb_overlay setup'
+fi
+# Pin the recognized foreign boot wrapper before checking firmware and staging.
+if [ -n "$MKV_KNOWN_VERSION" ]; then
+    MKV_BOOT_SHA="$MKV_CHECKED_SHA"
+    echo "MKV_WRAPPER=VERIFIED VERSION=$MKV_KNOWN_VERSION SHA256=$MKV_BOOT_SHA"
 fi
 echo "BOOT_MODE=$MODE BOOT_CHAIN=${BOOT_CHAIN:-MKV_ONLY} BOOT_OWNER=VERIFIED"
 # Code signatures are checked against the LIVE running player, before any persistent write.
@@ -409,13 +428,13 @@ case "$MODE" in
 esac
 # Refuse a race with MKV updating its wrapper or predecessor during staging.
 if [ "${BOOT_CHAIN:-}" = OVERLAY_VIA_MKV ]; then
-    [ "$(checksum "$MKV")" = 'ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a' ] && [ -f "$PREV" ] && [ ! -L "$PREV" ] && [ -x "$PREV" ] && [ "$(checksum "$PREV")" = 'cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24' ] && [ -d "$MKVD" ] || fail 'combined boot chain changed during staging'
+    [ "$(checksum "$MKV")" = "$MKV_BOOT_SHA" ] && [ -f "$PREV" ] && [ ! -L "$PREV" ] && [ -x "$PREV" ] && [ "$(checksum "$PREV")" = 'cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24' ] && [ -d "$MKVD" ] || fail 'combined boot chain changed during staging'
 fi
 # Recheck ownership just before the first persistent change.
 [ "$(checksum "$CONFIG")" = "$CONFIG_SHA" ] || fail 'config.ini changed during staging'
 [ ! -e "$D" ] && [ ! -L "$D" ] || fail 'autoABC directory appeared during staging'
 case "$MODE" in
-  OPPODV_PREV_110|OPPODV_PREV_EARLY_110) [ "$(checksum "$MKV")" = 'ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a' ] && [ ! -e "$PREV" ] && [ ! -L "$PREV" ] || fail 'MKV chain changed during staging' ;;
+  OPPODV_PREV_110|OPPODV_PREV_EARLY_110) [ "$(checksum "$MKV")" = "$MKV_BOOT_SHA" ] && [ ! -e "$PREV" ] && [ ! -L "$PREV" ] || fail 'MKV chain changed during staging' ;;
   OVERLAY_AUTOSTART_110|OVERLAY_MKV_AUTOSTART_110) [ "$(checksum "$AUTO")" = "$AUTO_ORIG_SHA" ] && [ "$(checksum "$BM")" = "$BM_SOURCE_SHA" ] || fail 'overlay changed during staging' ;;
   OVERLAY_EARLYBOOT_110|OVERLAY_MKV_EARLYBOOT_110) [ "$(checksum "$BM")" = "$BM_SOURCE_SHA" ] && [ ! -e "$REAL" ] && [ ! -L "$REAL" ] || fail 'brick_monitor changed during staging' ;;
 esac
@@ -428,7 +447,7 @@ case "$MODE" in
   OPPODV_PREV_110|OPPODV_PREV_EARLY_110)
     mv "$ADAPT_NEW" "$PREV" || fail 'cannot activate MKV predecessor'
     WRITTEN_PREV=YES
-    [ "$(checksum "$PREV")" = "$ADAPTER_EXPECTED_SHA" ] && [ "$(checksum "$MKV")" = 'ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a' ] || fail 'MKV boot integration verification failed' ;;
+    [ "$(checksum "$PREV")" = "$ADAPTER_EXPECTED_SHA" ] && [ "$(checksum "$MKV")" = "$MKV_BOOT_SHA" ] || fail 'MKV boot integration verification failed' ;;
   OVERLAY_AUTOSTART_110|OVERLAY_MKV_AUTOSTART_110)
     mv "$AUTO_NEW" "$AUTO" || fail 'cannot activate overlay autostart'
     WRITTEN_AUTOSTART=YES
@@ -442,7 +461,7 @@ case "$MODE" in
     [ "$(checksum "$BM")" = 'd080667d48f2166ea633eee3dc539abe0865334828590c5d2b482cd41226cff8' ] || fail 'earlyboot wrapper verification failed' ;;
 esac
 if [ "${BOOT_CHAIN:-}" = OVERLAY_VIA_MKV ]; then
-    [ "$(checksum "$MKV")" = 'ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a' ] && [ ! -L "$PREV" ] && [ "$(checksum "$PREV")" = 'cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24' ] || fail 'combined chain modified during activation'
+    [ "$(checksum "$MKV")" = "$MKV_BOOT_SHA" ] && [ ! -L "$PREV" ] && [ "$(checksum "$PREV")" = 'cfe0d2aab573f92c8a054018a7e9419590ae572adbcec689995b9638b3f26b24' ] || fail 'combined chain modified during activation'
 fi
 "$BB" sync 2>/dev/null || sync
 WRITTEN_RUNTIME=NO; WRITTEN_AUTOSTART=NO; WRITTEN_REAL=NO; WRITTEN_BM=NO; WRITTEN_PREV=NO
