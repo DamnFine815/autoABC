@@ -1,23 +1,23 @@
-# Installing autoABC 1.1.0
+# Installing autoABC 1.1.1
 
-[Back to README](../README.md) · [Release v1.1.0](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.0)
+[Back to README](../README.md) · [Release v1.1.1](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.1)
 
-**Supported target:** OPPO UDP-203 with RU-JB 65-0131 and a compatible, recognized player/boot chain. Supported layouts include identified jb_overlay v1.7/V2/V3, oppo-dv-mkv v1.6.0, and recognized combined installations. **CHECKONLY must pass on the actual player.**
+**Supported target:** OPPO UDP-203 with RU-JB 65-0131 and a compatible, recognized player/boot chain. Supported layouts include identified jb_overlay v1.7/V2/V3, oppo-dv-mkv v1.5.0/v1.6.0/v1.7.0, and recognized combined installations. **CHECKONLY must pass on the actual player.**
 
 ## Before starting
 
-1. **Uninstall any older autoABC using the uninstaller matching that older version.** Fully power-cycle before trying 1.1.0. Never install a new release on top of an older one.
+1. **Uninstall any older autoABC using the uninstaller matching that older version.** If 1.1.0 was installed before oppo-dv-mkv was updated to 1.7.0, the older uninstaller might refuse the changed launcher; do not bypass it. Fully power-cycle before trying 1.1.1. Never install a new release on top of an older one.
 2. If you have standalone [UOPfree](https://github.com/DamnFine815/UOPfree), uninstall it before enabling integrated `UOPFREE=1` (the default). Otherwise, deliberately choose `UOPFREE=0`.
 3. Keep a working recovery/backup method, stop playback, and remove other installer sticks. Unexpected firmware signatures or modified boot wrappers cause an intentional refusal.
-4. Download **only the actual v1.1.0 release assets**, not GitHub's automatically generated source ZIP:
+4. Download **only the actual v1.1.1 release assets**, not GitHub's automatically generated source ZIP:
 
 | File | Purpose | SHA-256 |
 | --- | --- | --- |
-| [CHECKONLY](https://github.com/DamnFine815/autoABC/releases/download/v1.1.0/autoABC-1.1.0-CHECKONLY.zip) | Read-only preflight before install | `d8896b250dd072a86ce8df7ed007e0e980c01deda520df9ec43f6546dfd90b8f` |
-| [INSTALL](https://github.com/DamnFine815/autoABC/releases/download/v1.1.0/autoABC-1.1.0-install.zip) | Install or verify identical installation | `10ed41939612614cf6d7c8c43f20ddaf0e007ec73eb9a584916c057debd00a2d` |
-| [UNINSTALL](https://github.com/DamnFine815/autoABC/releases/download/v1.1.0/autoABC-1.1.0-uninstall.zip) | Matching removal and restore | `92c8a3bef287a25795739447253654e0db3938badc63314f80bc684f8915f444` |
+| [CHECKONLY](https://github.com/DamnFine815/autoABC/releases/download/v1.1.1/autoABC-1.1.1-CHECKONLY.zip) | Read-only preflight before install | `89c00918876474a27584e12d6a4654c76fe6db1264d2cd0cc443bd596319a019` |
+| [INSTALL](https://github.com/DamnFine815/autoABC/releases/download/v1.1.1/autoABC-1.1.1-install.zip) | Install or verify identical installation | `e7f568ccd430b430b3395b0c517df8f92a1624907ecdb00e0e8e092de90e012d` |
+| [UNINSTALL](https://github.com/DamnFine815/autoABC/releases/download/v1.1.1/autoABC-1.1.1-uninstall.zip) | Matching removal and restore | `66df415b7f65183ec0ed349548e9e1a8e2edf9a988f0ba242132b99a37d033f1` |
 
-[SHA256SUMS](https://github.com/DamnFine815/autoABC/releases/download/v1.1.0/SHA256SUMS) lists the three exact archive fingerprints. Example checksum verification on macOS: `shasum -a 256 autoABC-1.1.0-install.zip`. On Linux: `sha256sum autoABC-1.1.0-install.zip`.
+[SHA256SUMS](https://github.com/DamnFine815/autoABC/releases/download/v1.1.1/SHA256SUMS) lists the three exact archive fingerprints. Example checksum verification on macOS: `shasum -a 256 autoABC-1.1.1-install.zip`. On Linux: `sha256sum autoABC-1.1.1-install.zip`.
 
 ## 1. CHECKONLY first
 
@@ -71,6 +71,6 @@ Remove the USB stick and fully power-cycle the player before testing playback. F
 
 ## 3. UNINSTALL or change options
 
-Use **the matching `autoABC-1.1.0-uninstall.zip`** and a clean USB stick, then power-cycle. For installation-time changes (especially Earlyboot), first uninstall the same version and reboot; then repeat CHECKONLY and INSTALL with revised options. See [Uninstallation](UNINSTALLATION.md) and [Configuration](CONFIGURATION.md).
+Use **the matching `autoABC-1.1.1-uninstall.zip`** and a clean USB stick, then power-cycle. For installation-time changes (especially Earlyboot), first uninstall the same version and reboot; then repeat CHECKONLY and INSTALL with revised options. See [Uninstallation](UNINSTALLATION.md) and [Configuration](CONFIGURATION.md).
 
 **Never manually delete `/mnt/ubi_boot/autoABC`, modify the boot monitor, or mix installers.**
