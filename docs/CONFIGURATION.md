@@ -1,4 +1,4 @@
-# autoABC 1.1.0 configuration
+# autoABC 1.1.1 configuration
 
 [Back to README](../README.md) · [Installation](INSTALLATION.md)
 
