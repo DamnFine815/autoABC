@@ -1,10 +1,10 @@
-# Troubleshooting — autoABC 1.1.0
+# Troubleshooting — autoABC 1.1.1
 
 [Back to README](../README.md) · [Installation](INSTALLATION.md)
 
 ## CHECKONLY or INSTALL appears to do nothing
 
-Only one extracted package may be on a clean USB stick, with `AutoScript/AutoScript.TSS` **directly at its root**. Run the [1.1.0 CHECKONLY](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.0) first. Find `autoABC-result.txt` and `autoABC.log` on USB. The installer can refuse ambiguous USB mounts or unknown launchers.
+Only one extracted package may be on a clean USB stick, with `AutoScript/AutoScript.TSS` **directly at its root**. Run the [1.1.1 CHECKONLY](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.1) first. Find `autoABC-result.txt` and `autoABC.log` on USB. The installer can refuse ambiguous USB mounts or unknown launchers.
 
 ## Result is FAILED or NOT COMPATIBLE
 
@@ -18,7 +18,7 @@ The EJECT command is **best effort**. Look at the `EJECT_STATUS` line in the USB
 
 ## Uninstall failed
 
-Use the **matching installed-version uninstaller**, not a newer or older package. For 1.1.0 read `autoABC-uninstall-result.txt` and `autoABC-uninstall.log`. A missing or modified original boot backup should cause a deliberate refusal. Never manually delete `/mnt/ubi_boot/autoABC` or overwrite `brick_monitor`.
+Use the **matching installed-version uninstaller**, not a newer or older package. For 1.1.1 read `autoABC-uninstall-result.txt` and `autoABC-uninstall.log`. A missing or modified original boot backup should cause a deliberate refusal. Never manually delete `/mnt/ubi_boot/autoABC` or overwrite `brick_monitor`.
 
 ## Already-inserted Blu-ray shows a region screen on first boot
 
