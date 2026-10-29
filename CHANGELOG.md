@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+- Added compatibility with the **oppo-dv-mkv v1.7.0** boot wrapper, including supported jb_overlay + MKV combinations.
+- Retained support for **oppo-dv-mkv v1.5.0 and v1.6.0**. The Blu-ray region hooks, PSR20, Earlyboot and integrated UOPfree are unchanged.
+- CHECKONLY, INSTALL and UNINSTALL recognize the pinned old/new MKV wrapper hashes; no universal/unchecked launcher acceptance. See [1.1.1 release notes](docs/RELEASE_NOTES_1.1.1.md).
+
 ## 1.1.0
 
 - Unified support for verified jb_overlay v1.7, V2 and V3 boot chains, compatible oppo-dv-mkv v1.5.0/v1.6.0 wrappers, and recognized combined installations.
