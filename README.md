@@ -2,11 +2,11 @@
 
 **autoABC** automatically selects Blu-ray **Region A/B/C** on supported **OPPO UDP-203 players with RU-JB 65-0131**. It works with physical HDMV and BD-J discs (including PSR20 checks), optionally ISO/BDMV, and includes **[UOPfree](https://github.com/DamnFine815/UOPfree)**.
 
-**Preview v1.1.2:** Adds SHA-256-pinned compatibility for the newer **oppo-dv-mkv 1.7.1, 1.8.x, 1.9.0 and 2.0.0-beta** boot-wrapper families, including recognized jb_overlay combinations, without changing the region/PSR20/Earlyboot/UOPfree runtime. **2.0.0-beta itself is experimental and has not yet been hardware-tested together with autoABC.** [Preview release](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.2) · [Preview notes](docs/RELEASE_NOTES_1.1.2.md).
+**New in v1.1.2:** Adds SHA-256-pinned compatibility for the newer **oppo-dv-mkv 1.7.1, 1.8.x, 1.9.0 and 2.0.0-beta** boot-wrapper families, including recognized jb_overlay combinations, without changing the region/PSR20/Earlyboot/UOPfree runtime. **2.0.0-beta itself is experimental and has not yet been hardware-tested together with autoABC.** [Release](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.2) · [Release notes](docs/RELEASE_NOTES_1.1.2.md).
 
 **New in v1.1.1:** autoABC now supports **oppo-dv-mkv v1.7.0**, while retaining **v1.5.0 / v1.6.0** support, including combined **jb_overlay v1.7 / v2.0 / v3** installations.
 
-> **Release:** [autoABC v1.1.1](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.1) is available now. **v1.0.0 is outdated — please do not install it.** If already installed, remove it with its matching uninstaller before upgrading.
+> **Release:** [autoABC v1.1.2](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.2) is available now. **v1.0.0 is outdated — please do not install it.** If already installed, remove it with its matching uninstaller before upgrading.
 >
 > **Warning:** This unofficial modification changes the running player's memory and integrates with its jailbreak boot chain. Back up your setup and have a recovery method. A successful compatibility check cannot guarantee every future boot or disc.
 
