@@ -1,10 +1,10 @@
 # Changelog
 
-## 1.1.2 (preview)
+## 1.1.2
 
 - Added verified upstream boot-wrapper fingerprints for **oppo-dv-mkv 1.7.1, 1.8.0, 1.8.1, 1.9.0 and 2.0.0-beta**, retaining 1.5.0-1.7.0.
 - Existing Blu-ray region, PSR20, Earlyboot and UOPfree runtime contents remain byte-identical to 1.1.1.
-- **2.0.0-beta is experimental**: wrapper compatibility is verified offline; its new Dolby Vision patches are not yet tested on an OPPO with autoABC. See [1.1.2 preview notes](docs/RELEASE_NOTES_1.1.2.md).
+- **2.0.0-beta is experimental**: wrapper compatibility is verified offline; its new Dolby Vision patches are not yet tested on an OPPO with autoABC. See [1.1.2 release notes](docs/RELEASE_NOTES_1.1.2.md).
 
 
 ## 1.1.1
