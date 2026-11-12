@@ -1,7 +1,7 @@
 #!/bin/sh
-# autoABC 1.1.1 TEST: remove ONLY installer's verified boot integration.
-VERSION='1.1.1'
-ID='1.1.1'
+# autoABC 1.1.2: remove ONLY installer's verified boot integration.
+VERSION='1.1.2'
+ID='1.1.2'
 U='/mnt/ubi_boot'
 D="$U/autoABC"
 OVERLAY="$U/jb_overlay"
@@ -23,7 +23,7 @@ for F in /mnt/sd*/AutoScript/autoABC-uninstall.id; do
     [ -f "$C/autoABC-uninstall.sh" ] || continue
     if [ -z "$S" ]; then S="$C"; else AMB=1; fi
 done
-[ -n "$S" ] || { echo 'autoABC 1.1.1 uninstall: matching USB missing' > /tmp/autoabc110-uninstall-error.txt; exit 1; }
+[ -n "$S" ] || { echo 'autoABC 1.1.2 uninstall: matching USB missing' > /tmp/autoabc110-uninstall-error.txt; exit 1; }
 USBROOT="${S%/*}"
 LOG="$USBROOT/autoABC-uninstall.log"
 RESULT="$USBROOT/autoABC-uninstall-result.txt"
@@ -39,13 +39,15 @@ BM_KEY8_SHA='b128bf89c2adcd76b386eeda1e1448b6c508f0db531eae138f56a7514acc0b6a'
 BM_SOURCE_SHA=''
 MKV_WRAPPER_OLD_SHA='ceb256ccd233e5c6f19d59b9a90a1b31a230c732b48637aa43a5eb8bbea1cb6a'
 MKV_WRAPPER_170_SHA='bcda04fbc464df8bd98b9ca57df0cec06d84a6f371519873f03241371f2b4dbc'
+MKV_WRAPPER_181_SHA='54ab24595a1b254e1bf45aa8f9578a4f70d883374e80d13e0a32fc00ad3ea4cd'
 MKV_BOOT_SHA=''
 mkv_wrapper_known(){
     [ -f "$MKV" ] && [ -x "$MKV" ] && [ ! -L "$MKV" ] || return 1
     MKV_CHECKED_SHA="$(checksum "$MKV")"
     case "$MKV_CHECKED_SHA" in
       "$MKV_WRAPPER_OLD_SHA") MKV_KNOWN_VERSION='1.5.0/1.6.0'; return 0 ;;
-      "$MKV_WRAPPER_170_SHA") MKV_KNOWN_VERSION='1.7.0'; return 0 ;;
+      "$MKV_WRAPPER_170_SHA") MKV_KNOWN_VERSION='1.7.0/1.7.1/1.8.0'; return 0 ;;
+      "$MKV_WRAPPER_181_SHA") MKV_KNOWN_VERSION='1.8.1/1.9.0/2.0.0-beta'; return 0 ;;
       *) return 1 ;;
     esac
 }
