@@ -1,4 +1,4 @@
-# autoABC 1.1.2 - Release Notes (Preview)
+# autoABC 1.1.2 - Release Notes
 
 Automatic Blu-ray Region A/B/C selection for OPPO UDP-203 (RU-JB 65-0131).
 
@@ -9,7 +9,7 @@ Automatic Blu-ray Region A/B/C selection for OPPO UDP-203 (RU-JB 65-0131).
 
 ### Important: beta and compatibility
 
-**oppo-dv-mkv v1.9.0 is the latest stable upstream version; v2.0.0-beta is experimental.** Both use the same upstream boot-wrapper bytes as v1.8.1. autoABC identifies the *wrapper family* by SHA-256, not the full upstream runtime version. Compatibility with the new 2.0.0-beta video-driver / Dolby Vision patches has not yet been verified on real hardware. This is a preview release for testing, not a guarantee of trouble-free playback.
+**oppo-dv-mkv v1.9.0 is the latest stable upstream version; v2.0.0-beta is experimental.** Both use the same upstream boot-wrapper bytes as v1.8.1. autoABC identifies the *wrapper family* by SHA-256, not the full upstream runtime version. Compatibility with the new 2.0.0-beta video-driver / Dolby Vision patches has not yet been verified on real hardware. Compatibility with the upstream beta remains unverified on real hardware; no release can guarantee trouble-free playback.
 
 ### Important: uninstall before upgrading
 
