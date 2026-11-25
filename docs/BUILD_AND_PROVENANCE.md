@@ -28,3 +28,7 @@ The v1.0.0 scripts and archived research retain value as **history**, but should
 ## Licensing and provenance
 
 The bundled static ARM BusyBox v1.31.0 is separately governed by GPLv2. [Official upstream source](https://busybox.net/downloads/busybox-1.31.0.tar.bz2) · [GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html). Linking upstream source is informational; complete binary-corresponding build inputs are not verified. The native OPPO-specific compiled helpers are not rebuilt by this repository's shell verification tools.
+
+## Update for the 1.1.2 integration request (November 2026)
+
+A separate [native-source status report](NATIVE_SOURCE_STATUS.md) now documents the missing original C/assembly, Clang 17/LLD 17 ELF evidence, exact compiled-helper hashes, and a byte-verified way to reconstruct the three hook blobs as **machine-word assembly listings**. Running this reconstruction is **not** equivalent to rebuilding the four ARM executables. No original compiler/linker command line for those programs has been recovered.
