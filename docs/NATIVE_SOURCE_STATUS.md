@@ -73,3 +73,11 @@ No exact compile/link commands for the four native ELFs can honestly be provided
 ## Licensing boundaries
 
 The original project code and documentation are [MIT-licensed](../LICENSE), and the author permits integration into oppo-dv-mkv. This does **not** automatically give rights to OPPO firmware, third-party modifications, or bundled **BusyBox (GPL-2.0)**. The native/source-provenance gap should remain explicit in any downstream repository.
+
+## Download the complete Vitor technical handoff (25 November 2026)
+
+The [autoABC v1.1.2 GitHub release](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.2) now also includes the **[Vitor native integration handoff ZIP](https://github.com/DamnFine815/autoABC/releases/download/v1.1.2/VITOR_AUTOABC_NATIVE_INTEGRATION_HANDOFF_20261125.zip)** (73 entries, 215,804 bytes; SHA-256: `2213f6aa66d9e7af7cd73d5d655202ce8eb6680ee08fa7687e0f3720a06d3824`). GitHub Actions independently reproduced the exact same archive from the official INSTALL release and verified the upload byte-for-byte.
+
+The archive contains native reference binaries, their disassembly/symbol tables, hook blobs and reconstructed machine-word listings, published shell/runtime scripts, and a signed-off provenance manifest. **It is a technical analysis package, not the missing original C/ASM source or a complete ARM build system.** It is intended for downstream integration work, not as a USB installer.
+
+For local regeneration, run `python3 tools/build_vitor_handoff_release.py <autoABC-1.1.2-install.zip> <repository-root> <handoff.zip> --strict-hash` with `readelf` and `llvm-objdump` available.
