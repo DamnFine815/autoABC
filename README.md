@@ -8,6 +8,12 @@
 >
 > **Warning:** This unofficial modification changes the running player's memory and integrates with its jailbreak boot chain. Back up your setup and have a recovery method. A successful compatibility check cannot guarantee every future boot or disc.
 
+## For developers and oppo-dv-mkv integration
+
+The original autoABC code and documentation are [MIT-licensed](LICENSE), and integration into oppo-dv-mkv is expressly permitted. The independently authored [UOPfree](https://github.com/DamnFine815/UOPfree) scripts are also MIT-licensed and may be integrated as a separate option.
+
+**Native source note:** The original C/assembly source and exact build commands for the four compiled ARM helpers have not been recovered. The shipped binaries retain useful function symbols; the three hook blobs have byte-reproducible **machine-word transcriptions**, not original assembly. See [Native source status and integration handoff](docs/NATIVE_SOURCE_STATUS.md) and [hook wordlist tool](tools/reconstruct_hook_wordlists.py). Do not describe the release as fully buildable from source yet.
+
 ## Features
 
 - Automatic Region **A/B/C** selection for physical **HDMV** and **BD-J** Blu-rays, including **PSR20-aware** behavior; all seven non-empty A/B/C allowed-region combinations are handled.
