@@ -22,6 +22,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq llvm
           python3 --version
           readelf --version | head -n 1
           llvm-objdump --version | head -n 2
