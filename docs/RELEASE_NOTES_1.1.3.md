@@ -36,7 +36,6 @@ Do not install 1.1.3 over an existing older autoABC. The new release retains the
 - Built from the original, checksum-pinned autoABC **1.1.2** CHECKONLY/INSTALL/UNINSTALL ZIPs, retaining the ZIP member order and permissions.
 - **All 7 focused offline regression tests passed**, including known/unknown wrapper recognition, symlink rejection, host predecessor chaining, version-specific rescue identity, CRC/internal manifests, unchanged native ARM payloads and an intentionally corrupted input rejection.
 - Build input full-ZIP and wrapper SHA-256 were checked against upstream oppo-dv-mkv **2.1.2-beta**, **2.2.0-beta** and **2.3.0-beta**.
-- **autoABC 1.1.3 with oppo-dv-mkv 2.3.0-beta has been confirmed working on real hardware.**
 - Cambridge Audio CXUHD and unsupported firmware layouts are **not** supported by this release. Do not bypass CHECKONLY to try other firmwares.
 
 ## Reproducible release packaging

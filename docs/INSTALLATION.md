@@ -2,7 +2,7 @@
 
 [Back to README](../README.md) · [Release v1.1.3](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.3)
 
-**Supported target:** OPPO UDP-203 with RU-JB 65-0131 and a compatible, recognized player/boot chain. Supported layouts include identified jb_overlay v1.7/V2/V3, oppo-dv-mkv pinned wrapper families v1.5.0 through v2.3.0-beta, and recognized combined installations. **CHECKONLY must pass on the actual player.** The v2.1–2.3 wrapper families passed offline verification, and autoABC 1.1.3 with oppo-dv-mkv v2.3.0-beta has been confirmed working on real hardware.
+**Supported target:** OPPO UDP-203 with RU-JB 65-0131 and a compatible, recognized player/boot chain. Supported layouts include identified jb_overlay v1.7/V2/V3, oppo-dv-mkv pinned wrapper families v1.5.0 through v2.3.0-beta, and recognized combined installations. **CHECKONLY must pass on the actual player.** The v2.1–2.3 wrapper families passed offline verification.
 
 ## Before starting
 

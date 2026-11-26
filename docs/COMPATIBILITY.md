@@ -11,7 +11,7 @@
 | `jb_overlay` + `oppo-dv-mkv v1.5.0 / v1.6.0 / v1.7.0` | Supported for the verified combined boot-chain signatures |
 | Other oppo-dv-mkv signatures | May be accepted only when the **exact** known wrapper and player signatures match |
 
-**Newly recognized upstream wrapper families:** v2.1.0–v2.1.2-beta (SHA-256 `4054c4b7c62155adea52299cf2cedf870eccd727bc5703aa16f555c4a458d42f`), v2.2.0-beta/v2.3.0-beta (SHA-256 `630bba8355379fe1731a28849881e5af5d39545794ea08e734d0fcbddd594321`). These match the boot-wrapper bytes in Vitor's official full ZIPs; Vitor's earlier player-and-patch code paths still require the exact live firmware checks below. autoABC 1.1.3 with oppo-dv-mkv v2.3.0-beta has also been confirmed working on real hardware.
+**Newly recognized upstream wrapper families:** v2.1.0–v2.1.2-beta (SHA-256 `4054c4b7c62155adea52299cf2cedf870eccd727bc5703aa16f555c4a458d42f`), v2.2.0-beta/v2.3.0-beta (SHA-256 `630bba8355379fe1731a28849881e5af5d39545794ea08e734d0fcbddd594321`). These match the boot-wrapper bytes in Vitor's official full ZIPs; Vitor's earlier player-and-patch code paths still require the exact live firmware checks below.
 
 Every mode requires **[CHECKONLY](https://github.com/DamnFine815/autoABC/releases/download/v1.1.3/autoABC-1.1.3-CHECKONLY.zip)** to report **`COMPATIBLE`** on the actual player before installation. Unknown `brick_monitor` modifications, unexpected player-code bytes, incompatible boot ownership, duplicate standalone [UOPfree](https://github.com/DamnFine815/UOPfree) (with `UOPFREE=1`), and existing older autoABC installations are intentionally rejected.
 
