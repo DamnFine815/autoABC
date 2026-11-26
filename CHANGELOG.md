@@ -6,7 +6,7 @@
 - Updates CHECKONLY, INSTALL and matching UNINSTALL, retaining unknown-wrapper fail-closed behavior, exact firmware-memory signature checks, Earlyboot integration and conservative boot-chain ownership.
 - Adds **`autoABC-1.1.2-v2.3-rescue-uninstall.zip`** for installations with `BUILD_ID=1.1.2` whose original matching uninstaller cannot recognize a newly updated oppo-dv-mkv 2.1–2.3 wrapper. The rescue preserves the 1.1.2 installation identity and changes only wrapper acceptance in the original uninstaller. Not for other autoABC versions.
 - **No changes** to the ARM region detectors, PSR20 hook/logic, UOPfree runtime or boot adapters. Built from SHA-256 pinned original 1.1.2 release ZIPs with sealed manifest and unrelated-member parity.
-- Seven focused offline regression tests passed, including a live POSIX-shell handoff of the actual oppo-dv-mkv v2.3 boot wrapper to a simulated predecessor. **Actual OPPO hardware compatibility with v2.3 has not yet been tested.** Run CHECKONLY and maintain a recovery route.
+- Seven focused offline regression tests passed, including a live POSIX-shell handoff of the actual oppo-dv-mkv v2.3 boot wrapper to a simulated predecessor. **autoABC 1.1.3 with oppo-dv-mkv v2.3.0-beta has been confirmed working on real hardware.** Run CHECKONLY and maintain a recovery route.
 - [Full release notes](docs/RELEASE_NOTES_1.1.3.md) · [Reproducible packager](tools/build_release_1_1_3.py).
 
 ## 1.1.2 — 2026-11-12

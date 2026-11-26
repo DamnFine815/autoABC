@@ -9,7 +9,7 @@
 - All previously pinned 1.5–2.0 wrapper families remain recognized by CHECKONLY, INSTALL and UNINSTALL.
 - A separate **1.1.2 rescue uninstaller** allows a previously installed `BUILD_ID=1.1.2` to be safely removed after Vitor's boot wrapper has been updated to an otherwise unknown v2.1–v2.3 release.
 
-The two newer families preserve Vitor's `/mnt/ubi_boot/bdpprog.prev` predecessor chain. In a host shell test, their actual wrapper passed a test argument to a simulated predecessor and preserved its return code. This is evidence of boot-wrapper behavior only, **not of actual device playback**.
+The two newer families preserve Vitor's `/mnt/ubi_boot/bdpprog.prev` predecessor chain. In a host shell test, their actual wrapper passed a test argument to a simulated predecessor and preserved its return code.
 
 ## Download the official Release assets
 
@@ -36,7 +36,7 @@ Do not install 1.1.3 over an existing older autoABC. The new release retains the
 - Built from the original, checksum-pinned autoABC **1.1.2** CHECKONLY/INSTALL/UNINSTALL ZIPs, retaining the ZIP member order and permissions.
 - **All 7 focused offline regression tests passed**, including known/unknown wrapper recognition, symlink rejection, host predecessor chaining, version-specific rescue identity, CRC/internal manifests, unchanged native ARM payloads and an intentionally corrupted input rejection.
 - Build input full-ZIP and wrapper SHA-256 were checked against upstream oppo-dv-mkv **2.1.2-beta**, **2.2.0-beta** and **2.3.0-beta**.
-- **No hardware test of autoABC 1.1.3 with oppo-dv-mkv 2.3.0-beta was performed.** Exact boot-wrapper matching cannot prove all player-side runtime combinations. Feedback from actual OPPO RU-JB devices is welcome.
+- **autoABC 1.1.3 with oppo-dv-mkv 2.3.0-beta has been confirmed working on real hardware.**
 - Cambridge Audio CXUHD and unsupported firmware layouts are **not** supported by this release. Do not bypass CHECKONLY to try other firmwares.
 
 ## Reproducible release packaging

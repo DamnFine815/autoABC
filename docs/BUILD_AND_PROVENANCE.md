@@ -37,6 +37,6 @@ A separate [native-source status report](NATIVE_SOURCE_STATUS.md) now documents 
 
 The [1.1.3 packager](../tools/build_release_1_1_3.py) verifies the three exact published 1.1.2 USB release ZIPs and the official oppo-dv-mkv 2.1.2-beta / 2.2.0-beta / 2.3.0-beta FULL ZIPs by SHA-256. It changes only each top-level install/check/uninstall shell script's version and exact known boot-wrapper fingerprints, the USB identity marker and the outer manifest. The native ARM executables, firmwares signatures, hook blobs, early-boot wrappers, bundled BusyBox, user config templates and installed runtime manifest are byte-identical to v1.1.2.
 
-The packager additionally produces a **version-specific 1.1.2 rescue uninstaller** that retains the old USB and installed 1.1.2 ID while allowing the exact verified new upstream wrappers. [1.1.3 release notes](RELEASE_NOTES_1.1.3.md) record the verified outputs, tests and the fact that real device testing with the upstream 2.3 beta is pending.
+The packager additionally produces a **version-specific 1.1.2 rescue uninstaller** that retains the old USB and installed 1.1.2 ID while allowing the exact verified new upstream wrappers. [1.1.3 release notes](RELEASE_NOTES_1.1.3.md) record the verified outputs, offline tests and the successful real-device test with oppo-dv-mkv 2.3.0-beta.
 
 This is a reproducible ZIP repackaging update, **not** a recovered C/assembly source build of the four native helpers.
