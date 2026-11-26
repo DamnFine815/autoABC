@@ -82,8 +82,11 @@ def validate_manifest(z: ZipFile, name: str) -> None:
         parts = line.split("  ", 1)
         demand(len(parts) == 2 and len(parts[0]) == 64, "bad manifest line " + line)
         want, member = parts
-        demand(member in z.namelist(), "manifest member missing: " + member)
-        demand(digest(z.read(member)) == want, "manifest digest mismatch: " + member)
+        # Inner runtime manifest names are relative to AutoScript/autoABC.
+        entry = ("AutoScript/autoABC/" + member
+                 if name == "AutoScript/autoABC/SHA256SUMS" else member)
+        demand(entry in z.namelist(), "manifest member missing: " + entry)
+        demand(digest(z.read(entry)) == want, "manifest digest mismatch: " + entry)
 
 
 def inspect_upstream(directory: Path) -> dict[str, bytes]:
