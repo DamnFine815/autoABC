@@ -2,7 +2,7 @@
 
 **autoABC** automatically selects Blu-ray **Region A/B/C** on supported **OPPO UDP-203 players with RU-JB 65-0131**. It works with physical HDMV and BD-J discs (including PSR20 checks), optionally ISO/BDMV, and includes **[UOPfree](https://github.com/DamnFine815/UOPfree)**.
 
-**New in v1.1.3:** exact, verified boot-wrapper fingerprints for **oppo-dv-mkv v2.1.x, v2.2.0-beta and v2.3.0-beta**, while retaining all previously recognized v1.5–v2.0 wrapper families. ARM helpers, region algorithms, PSR20, Earlyboot and UOPfree are unchanged. The new wrapper families passed offline tests.
+**New in v1.1.3:** exact, verified boot-wrapper fingerprints for **oppo-dv-mkv v2.1.x, v2.2.0-beta and v2.3.0-beta**, while retaining all previously recognized v1.5–v2.0 wrapper families. ARM helpers, region algorithms, PSR20, Earlyboot and UOPfree are unchanged.
 
 > **Release:** [autoABC v1.1.3](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.3). Use only a recognized OPPO UDP-203 RU-JB 65-0131 environment and run **CHECKONLY first**. If an earlier autoABC is installed, uninstall it safely before upgrading. See the [1.1.3 release notes](docs/RELEASE_NOTES_1.1.3.md) and special 1.1.2 recovery note below.
 >
