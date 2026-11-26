@@ -10,7 +10,8 @@ permissions:
 
 jobs:
   audit:
-    if: github.event.head_commit.message == 'ci: audit oppo-dv-mkv 2.3 wrapper without publishing'
+    if: >-
+      github.event.head_commit.message == 'ci: audit oppo-dv-mkv 2.3 wrapper without publishing'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
