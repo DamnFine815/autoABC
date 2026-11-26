@@ -1,0 +1,116 @@
+name: One-time publish verified autoABC v1.1.3 for oppo-dv-mkv 2.3
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/one-time-publish-v113.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: >-
+      github.event.head_commit.message == 'ci: publish verified autoABC 1.1.3 release'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm target state and latest upstream
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(cat VERSION)" = '1.1.3'
+          test "$(gh api repos/fandangos/oppo-dv-mkv/releases/latest --jq .tag_name)" = 'v2.3.0-beta'
+          if gh release view v1.1.3 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "ABORT: release v1.1.3 already exists; will not overwrite"
+            exit 1
+          fi
+          test -f tools/build_release_1_1_3.py
+          test -f tests/test_release_1_1_3.py
+          test -f docs/RELEASE_NOTES_1.1.3.md
+      - name: Download checksum-pinned official release inputs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/ABC" "$RUNNER_TEMP/DV"
+          gh release download v1.1.2 --repo DamnFine815/autoABC --dir "$RUNNER_TEMP/ABC" \
+            --pattern 'autoABC-1.1.2-*.zip'
+          for tag in v2.1.2-beta v2.2.0-beta v2.3.0-beta; do
+            gh release download "$tag" --repo fandangos/oppo-dv-mkv --dir "$RUNNER_TEMP/DV" \
+              --pattern "oppo-dv-mkv-$tag-full.zip"
+          done
+      - name: Rebuild release and re-run seven offline regression tests
+        shell: bash
+        env:
+          ABC_112_ASSETS: ${{ runner.temp }}/ABC
+          OPPODV_UPSTREAM_ASSETS: ${{ runner.temp }}/DV
+        run: |
+          set -euo pipefail
+          python3 tools/build_release_1_1_3.py "$ABC_112_ASSETS" "$OPPODV_UPSTREAM_ASSETS" "$RUNNER_TEMP/dist113"
+          python3 -m unittest discover -s tests -p test_release_1_1_3.py -v
+          (cd "$RUNNER_TEMP/dist113" && sha256sum -c SHA256SUMS)
+          echo "BUILD_AND_TEST=PASS"
+      - name: Create DRAFT release with exact verified files
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create v1.1.3 \
+            "$RUNNER_TEMP/dist113/autoABC-1.1.3-CHECKONLY.zip" \
+            "$RUNNER_TEMP/dist113/autoABC-1.1.3-install.zip" \
+            "$RUNNER_TEMP/dist113/autoABC-1.1.3-uninstall.zip" \
+            "$RUNNER_TEMP/dist113/autoABC-1.1.2-v2.3-rescue-uninstall.zip" \
+            "$RUNNER_TEMP/dist113/SHA256SUMS" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --draft --title "autoABC 1.1.3" \
+            --notes-file docs/RELEASE_NOTES_1.1.3.md
+      - name: Check GitHub draft assets byte-for-byte BEFORE publishing
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v1.1.3" > "$RUNNER_TEMP/autoabc113-release-draft.json"
+          python3 - <<'PY'
+          import json,hashlib,os
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])
+          release=json.loads((root/'autoabc113-release-draft.json').read_text())
+          dist=root/'dist113'
+          expected={p.name:('sha256:'+hashlib.sha256(p.read_bytes()).hexdigest(),p.stat().st_size)
+                    for p in dist.iterdir() if p.is_file()}
+          actual={x['name']:(x.get('digest'),x['size']) for x in release['assets']}
+          assert release['draft'] is True and release['tag_name']=='v1.1.3'
+          assert len(expected)==5 and set(actual)==set(expected),(expected,actual)
+          for name in expected:
+            assert actual[name]==expected[name],(name,actual[name],expected[name])
+          assert not release['prerelease']
+          print('GITHUB_DRAFT_ASSETS=PASS all_5_byte_hashes_match')
+          PY
+      - name: Publish verified release as latest
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release edit v1.1.3 --repo "$GITHUB_REPOSITORY" --draft=false --prerelease=false --latest
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v1.1.3" > "$RUNNER_TEMP/autoabc113-release-final.json"
+          gh api "repos/$GITHUB_REPOSITORY/releases/latest" > "$RUNNER_TEMP/autoabc113-latest.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])
+          release=json.loads((root/'autoabc113-release-final.json').read_text())
+          latest=json.loads((root/'autoabc113-latest.json').read_text())
+          assert not release['draft'] and not release['prerelease']
+          assert release['tag_name']=='v1.1.3' and latest['tag_name']=='v1.1.3'
+          assert len(release['assets'])==5
+          print('PUBLIC_RELEASE=PASS',release['html_url'])
+          print('LATEST_RELEASE=v1.1.3')
+          PY
