@@ -2,9 +2,9 @@
 
 **autoABC** automatically selects Blu-ray **Region A/B/C** on supported **OPPO UDP-203 players with RU-JB 65-0131**. It works with physical HDMV and BD-J discs (including PSR20 checks), optionally ISO/BDMV, and includes **[UOPfree](https://github.com/DamnFine815/UOPfree)**.
 
-**New in v1.1.1:** autoABC now supports **oppo-dv-mkv v1.7.0**, while retaining **v1.5.0 / v1.6.0** support, including combined **jb_overlay v1.7 / v2.0 / v3** installations.
+**New in v1.1.3:** exact, verified boot-wrapper fingerprints for **oppo-dv-mkv v2.1.x, v2.2.0-beta and v2.3.0-beta**, while retaining all previously recognized v1.5–v2.0 wrapper families. ARM helpers, region algorithms, PSR20, Earlyboot and UOPfree are unchanged. The new combinations passed offline tests; **real-device verification with v2.3.0-beta is pending**.
 
-> **Release:** [autoABC v1.1.1](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.1) is available now. **v1.0.0 is outdated — please do not install it.** If already installed, remove it with its matching uninstaller before upgrading.
+> **Release:** [autoABC v1.1.3](https://github.com/DamnFine815/autoABC/releases/tag/v1.1.3). Use only a recognized OPPO UDP-203 RU-JB 65-0131 environment and run **CHECKONLY first**. If an earlier autoABC is installed, uninstall it safely before upgrading. See the [1.1.3 release notes](docs/RELEASE_NOTES_1.1.3.md) and special 1.1.2 recovery note below.
 >
 > **Warning:** This unofficial modification changes the running player's memory and integrates with its jailbreak boot chain. Back up your setup and have a recovery method. A successful compatibility check cannot guarantee every future boot or disc.
 
@@ -23,17 +23,17 @@ The original autoABC code and documentation are [MIT-licensed](LICENSE), and int
 - Safe return toward the normal stock region after a playback session, no persistent per-disc region cache.
 - Separate **CHECKONLY**, **INSTALL** and **UNINSTALL** USB packages, exact signature checks, guarded boot-file backup/restore and readable result logs.
 
-## Installation (1.1.1)
+## Installation (1.1.3)
 
-**Release files:** [CHECKONLY](https://github.com/DamnFine815/autoABC/releases/download/v1.1.1/autoABC-1.1.1-CHECKONLY.zip), [INSTALL](https://github.com/DamnFine815/autoABC/releases/download/v1.1.1/autoABC-1.1.1-install.zip), [UNINSTALL](https://github.com/DamnFine815/autoABC/releases/download/v1.1.1/autoABC-1.1.1-uninstall.zip) and [SHA256SUMS](https://github.com/DamnFine815/autoABC/releases/download/v1.1.1/SHA256SUMS). Download the official assets; **do not use GitHub’s automatically generated “Source code” ZIP** as an installer. Verify your downloads against `SHA256SUMS`.
+**Release files:** [CHECKONLY](https://github.com/DamnFine815/autoABC/releases/download/v1.1.3/autoABC-1.1.3-CHECKONLY.zip), [INSTALL](https://github.com/DamnFine815/autoABC/releases/download/v1.1.3/autoABC-1.1.3-install.zip), [UNINSTALL](https://github.com/DamnFine815/autoABC/releases/download/v1.1.3/autoABC-1.1.3-uninstall.zip) and [SHA256SUMS](https://github.com/DamnFine815/autoABC/releases/download/v1.1.3/SHA256SUMS). Download the official assets; **do not use GitHub’s automatically generated “Source code” ZIP** as an installer. Verify your downloads against `SHA256SUMS`.
 
-1. **Uninstall any older autoABC first, using that version's matching uninstaller.** Remove its USB stick and fully power-cycle the player. Never install 1.1.1 over an earlier version.
-   **Upgrade note:** If you updated oppo-dv-mkv to 1.7.0 while autoABC 1.1.0 was still installed, its old uninstaller may reject the new MKV wrapper. **Do not force-remove anything or run the 1.1.1 uninstaller against 1.1.0.**
+1. **Uninstall any older autoABC first, using that version's matching uninstaller.** Remove its USB stick and fully power-cycle the player. Never install 1.1.3 over an earlier version.
+   **Important for autoABC 1.1.2 + oppo-dv-mkv 2.1–2.3:** if the matching 1.1.2 uninstaller rejects Vitor's new wrapper, use the [verified 1.1.2 recovery uninstaller](https://github.com/DamnFine815/autoABC/releases/download/v1.1.3/autoABC-1.1.2-v2.3-rescue-uninstall.zip) **only for an installed 1.1.2**. Never use the 1.1.3 uninstaller on 1.1.2 or the rescue uninstaller on other versions. Then fully power-cycle, run 1.1.3 CHECKONLY and only install if it reports COMPATIBLE.
 2. **Uninstall standalone [UOPfree](https://github.com/DamnFine815/UOPfree) first** if you want integrated `UOPFREE=1` (the default). The installer will reject a duplicate standalone [UOPfree](https://github.com/DamnFine815/UOPfree) setup.
 3. Extract **CHECKONLY only** to the root of a clean, player-readable USB stick, so that `AutoScript/AutoScript.TSS` is directly under the USB root. Adjust `AutoScript/config.ini` and `AutoScript/uopfree.ini` as desired. Start the player with the USB inserted.
 4. Check **`autoABC-result.txt`** on the USB stick: it must say **`COMPATIBLE`**. Read `autoABC.log` for details. CHECKONLY performs compatibility checks **without installing autoABC**. Remove the stick and fully power-cycle.
-5. Extract **INSTALL only** to a clean USB root. Use **the same configuration values** as CHECKONLY; save both INI files. Boot with the stick and confirm **`INSTALLED`** (or `ALREADY_INSTALLED` for a verified identical 1.1.1 installation) in `autoABC-result.txt`. If it says `FAILED`, stop and examine `autoABC.log`.
-6. Remove the USB stick, **fully power-cycle**, and confirm normal startup and disc playback. For removal, use **only the matching 1.1.1 UNINSTALL** package and reboot again.
+5. Extract **INSTALL only** to a clean USB root. Use **the same configuration values** as CHECKONLY; save both INI files. Boot with the stick and confirm **`INSTALLED`** (or `ALREADY_INSTALLED` for a verified identical 1.1.3 installation) in `autoABC-result.txt`. If it says `FAILED`, stop and examine `autoABC.log`.
+6. Remove the USB stick, **fully power-cycle**, and confirm normal startup and disc playback. For removal, use **only the matching 1.1.3 UNINSTALL** package and reboot again.
 
 **Use only one AutoScript ZIP at a time.** Ejecting the tray is a convenience, **not proof of success**. The EJECT result is logged separately; the USB result file is authoritative. CHECKONLY can reject an unsupported or modified setup, but cannot certify cold-boot timing.
 
@@ -64,18 +64,18 @@ These are installation-time settings. **To change the installed boot integration
 
 The installer recognizes **exact, known boot-chain and firmware signatures**; similar version names or unrelated patches are not automatically accepted.
 
-| Boot environment | 1.1.1 support |
+| Boot environment | 1.1.3 recognition |
 | --- | --- |
 | **jb_overlay v1.7, V2, V3** | Known overlay boot chain, including verified stock `brick_monitor` and the specific recognized EJECT-to-KEY8 variant |
-| **oppo-dv-mkv v1.5.0–v1.7.0** without jb_overlay | Known MKV-only wrapper, with Earlyboot support |
-| **jb_overlay + oppo-dv-mkv v1.5.0–v1.7.0** | Recognized combined boot chain, with Earlyboot support |
+| **oppo-dv-mkv v1.5.0–v2.3.0-beta** without jb_overlay | Exact pinned wrapper families, with Earlyboot integration; v2.1–2.3 offline-tested only |
+| **jb_overlay + oppo-dv-mkv v1.5.0–v2.3.0-beta** | Exact pinned combined boot chain; v2.1–2.3 hardware validation pending |
 | **oppo-dv-mkv v1.5.0** | Its recognized wrapper signature is also accepted |
 
 Support is conditional on **CHECKONLY=COMPATIBLE**. V2 has matching known boot-file signatures; it has not been independently confirmed through a complete hardware cold-boot test. Hardware feedback exists for v1.7 Earlyboot and combined-overlay installation, plus user-reported MKV-only functionality; this is not a guarantee for every modified boot setup. See [Compatibility](docs/COMPATIBILITY.md).
 
 ## Telnet / SSH quick reference
 
-These commands are for an **installed 1.1.1**. Read-only checks first:
+These commands are for an **installed 1.1.3**. Read-only checks first:
 
 ```sh
 # Confirm build, boot mode and configuration
